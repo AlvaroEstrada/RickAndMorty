@@ -1,8 +1,7 @@
 package com.alvaroestrada.rickandmorty.ui.composables
 
-import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,13 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.alvaroestrada.rickandmorty.data.model.Character
+import com.alvaroestrada.rickandmorty.ui.navigation.NavigationRoutes
 import com.alvaroestrada.rickandmorty.ui.theme.ClearGrey
 import com.alvaroestrada.rickandmorty.ui.theme.DarkPurple
 import com.alvaroestrada.rickandmorty.ui.theme.Error
@@ -30,13 +34,14 @@ import com.alvaroestrada.rickandmorty.ui.theme.Success
 import com.alvaroestrada.rickandmorty.ui.theme.WhiteGrey
 
 @Composable
-fun ItemCharacter(character: Character) {
+fun ItemCharacter(character: Character, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
             .padding(8.dp)
-            .background(Color.Transparent),
+            .background(Color.Transparent)
+            .clickable { navController.navigate("CHARACTER_DETAIL_SCREEN/"+ character.id) },
         elevation = 5.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -46,9 +51,15 @@ fun ItemCharacter(character: Character) {
                 .background(DarkPurple)
         ) {
             val (image, nameCharacter, statusIndicator, gender, specie) = createRefs()
-            Image(
-                bitmap = character.image.asImageBitmap(),
-                contentDescription = "Example Photo",
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(character.image)
+                    .crossfade(true)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .networkCachePolicy(CachePolicy.ENABLED)
+                    .build(),
+                contentDescription = "Character Image",
                 modifier = Modifier
                     .fillMaxHeight()
                     .constrainAs(image) {
@@ -70,7 +81,7 @@ fun ItemCharacter(character: Character) {
                     }
             )
 
-            when (character.status){
+            when (character.status) {
                 "Alive" -> {
                     Text(
                         modifier = Modifier
@@ -88,6 +99,7 @@ fun ItemCharacter(character: Character) {
                         textAlign = TextAlign.Center
                     )
                 }
+
                 "Dead" -> {
                     Text(
                         modifier = Modifier
@@ -105,6 +117,7 @@ fun ItemCharacter(character: Character) {
                         textAlign = TextAlign.Center
                     )
                 }
+
                 else -> {
                     Text(
                         modifier = Modifier
@@ -125,7 +138,7 @@ fun ItemCharacter(character: Character) {
             }
 
             Text(
-                text = character.gender + "  ·  ",
+                text = (character.gender + "  ·  "),
                 style = MaterialTheme.typography.subtitle1,
                 color = WhiteGrey,
                 modifier = Modifier
@@ -161,9 +174,3 @@ fun Modifier.vertical() =
             )
         }
     }
-
-@Preview(showBackground = true)
-@Composable
-fun ItemCharacterPreview() {
-    //ItemCharacter(context = MainActivity::class.java)
-}

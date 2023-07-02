@@ -1,8 +1,8 @@
-package com.alvaroestrada.rickandmorty.domain.model
+package com.alvaroestrada.rickandmorty.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class OriginRemote(
+data class OriginInfo(
     @SerializedName("name")
     val name: String,
     @SerializedName("url")

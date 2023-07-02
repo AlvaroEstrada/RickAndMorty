@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -17,7 +19,8 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://rickandmortyapi.com/api")
+            .baseUrl("https://rickandmortyapi.com/api/")
+            .client(getOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -27,4 +30,10 @@ object NetworkModule {
     fun provideCharacterApi(retrofit: Retrofit): CharacterApi {
         return retrofit.create(CharacterApi::class.java)
     }
+
+    private fun getLoggingIntercepter() =
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+
+    private fun getOkHttpClient() =
+        OkHttpClient.Builder().addInterceptor(getLoggingIntercepter()).build()
 }
