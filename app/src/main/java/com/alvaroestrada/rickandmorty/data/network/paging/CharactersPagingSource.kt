@@ -4,9 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.alvaroestrada.rickandmorty.data.model.Character
 import com.alvaroestrada.rickandmorty.data.network.CharacterApi
-import javax.inject.Inject
 
-class CharactersPagingSource(private val api: CharacterApi): PagingSource<Int, Character>() {
+class CharactersPagingSource(private val api: CharacterApi) : PagingSource<Int, Character>() {
 
     override fun getRefreshKey(state: PagingState<Int, Character>): Int? {
         return state.anchorPosition?.let { anchorPosition ->

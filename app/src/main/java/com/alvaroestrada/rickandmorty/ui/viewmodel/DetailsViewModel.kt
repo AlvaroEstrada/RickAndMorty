@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,6 +24,7 @@ class DetailsViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     fun getCharacter(id: Int) {
+        Timber.i("GetCharacter $id")
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCharacter(id).catch {
                 _uiState.value = _uiState.value.copy(
@@ -29,11 +32,8 @@ class DetailsViewModel @Inject constructor(
                     isError = true,
                 )
                 Timber.i("Loading = false")
-            }.collect {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    character = it
-                )
+            }.collectLatest {
+                _uiState.update { old -> old.copy(isLoading = false, character = it) }
                 Timber.i("Loading = false")
             }
         }

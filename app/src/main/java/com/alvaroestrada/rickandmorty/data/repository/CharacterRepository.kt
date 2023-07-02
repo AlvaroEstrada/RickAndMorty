@@ -17,7 +17,7 @@ class CharacterRepository @Inject constructor(
         pagingSourceFactory = { CharactersPagingSource(api) }
     ).flow
 
-    fun getCharacter(id: Int): Flow<Character> = flow{
+    fun getCharacter(id: Int): Flow<Character> = flow {
         emit(api.getCharacter(id))
     }
 

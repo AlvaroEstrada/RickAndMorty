@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,11 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.alvaroestrada.rickandmorty.R
@@ -36,44 +31,24 @@ import com.alvaroestrada.rickandmorty.ui.composables.ItemCharacter
 import com.alvaroestrada.rickandmorty.ui.theme.DarkLightPurple
 import com.alvaroestrada.rickandmorty.ui.theme.DarkPurple
 import com.alvaroestrada.rickandmorty.ui.theme.WhiteGrey
-import com.alvaroestrada.rickandmorty.ui.viewmodel.DetailsViewModel
 import com.alvaroestrada.rickandmorty.ui.viewmodel.ListViewModel
-import timber.log.Timber
 
 @Composable
-fun ListScreen(navController: NavHostController) {
-    val viewModel: ListViewModel = hiltViewModel()
-    val characters = viewModel.getCharacters().collectAsLazyPagingItems()
-
-    Log.i("LOAD","LOAD LIST ---> CARGADA")
+fun ListScreen(onItemClick: (Character) -> Unit) {
 
     Scaffold(
-    modifier = Modifier
-        .fillMaxSize()
-        .background(DarkPurple),
-    topBar = { AppBar() }
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkPurple),
+        topBar = { AppBar() }
     ) { innerPadding ->
-        ConstraintLayout(
-            Modifier
+        CharacterList(
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .background(DarkLightPurple)
-        ) {
-
-            val (list) = createRefs()
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .constrainAs(list) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            ) {
-                CharacterList(characters, navController)
-            }
-        }
+                .background(DarkLightPurple),
+            onItemClick = onItemClick
+        )
     }
 }
 
@@ -140,12 +115,14 @@ fun LoadingScreen() {
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<Character>, navController: NavHostController) {
+fun CharacterList(
+    modifier: Modifier = Modifier,
+    viewModel: ListViewModel = hiltViewModel(),
+    onItemClick: (Character) -> Unit
+) {
+    val characters = viewModel.getCharacters().collectAsLazyPagingItems()
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 8.dp, bottom = 0.dp, start = 8.dp, end = 8.dp),
-
+        modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -153,7 +130,7 @@ fun CharacterList(characters: LazyPagingItems<Character>, navController: NavHost
             items = characters,
             key = { it.url }
         ) { character ->
-            if (character != null) ItemCharacter(character, navController)
+            if (character != null) ItemCharacter(character, onItemClick)
         }
 
         when (characters.loadState.refresh) { //FIRST LOAD

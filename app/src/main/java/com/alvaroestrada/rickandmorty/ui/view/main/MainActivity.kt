@@ -31,10 +31,17 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = ListScreen.route
                 ) {
-                    composable(ListScreen.route) { ListScreen(navController) }
+                    composable(ListScreen.route) {
+                        ListScreen {
+                            navController.navigate("CHARACTER_DETAIL_SCREEN/${it.id}") {
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+
                     composable(
                         CharacterDetailScreen.route,
-                        arguments = listOf(navArgument("id") {type = NavType.IntType })
+                        arguments = listOf(navArgument("id") { type = NavType.IntType })
                     ) { backStackEntry ->
                         CharacterDetailScreen(backStackEntry.arguments?.getInt("id") ?: 0)
                     }

@@ -18,15 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.alvaroestrada.rickandmorty.data.model.Character
-import com.alvaroestrada.rickandmorty.ui.navigation.NavigationRoutes
 import com.alvaroestrada.rickandmorty.ui.theme.ClearGrey
 import com.alvaroestrada.rickandmorty.ui.theme.DarkPurple
 import com.alvaroestrada.rickandmorty.ui.theme.Error
@@ -34,14 +31,14 @@ import com.alvaroestrada.rickandmorty.ui.theme.Success
 import com.alvaroestrada.rickandmorty.ui.theme.WhiteGrey
 
 @Composable
-fun ItemCharacter(character: Character, navController: NavHostController) {
+fun ItemCharacter(character: Character, onItemClick: (Character) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
             .padding(8.dp)
             .background(Color.Transparent)
-            .clickable { navController.navigate("CHARACTER_DETAIL_SCREEN/"+ character.id) },
+            .clickable { onItemClick(character) },
         elevation = 5.dp,
         shape = RoundedCornerShape(8.dp)
     ) {

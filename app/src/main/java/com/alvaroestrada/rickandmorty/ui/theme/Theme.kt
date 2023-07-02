@@ -34,7 +34,7 @@ fun RickAndMortyTheme(
     // Dynamic color is available on Android 12+
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme){
+    val colorScheme = if (darkTheme) {
         DarkColorScheme
     } else {
         LightColorScheme
