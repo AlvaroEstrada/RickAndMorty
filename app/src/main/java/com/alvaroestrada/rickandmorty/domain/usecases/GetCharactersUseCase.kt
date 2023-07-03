@@ -1,7 +1,6 @@
 package com.alvaroestrada.rickandmorty.domain.usecases
 
 import com.alvaroestrada.rickandmorty.data.repository.CharacterRepository
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class GetCharactersUseCase @Inject constructor(

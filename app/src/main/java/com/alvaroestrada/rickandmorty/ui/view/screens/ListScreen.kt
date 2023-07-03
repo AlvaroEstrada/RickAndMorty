@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.alvaroestrada.rickandmorty.R
@@ -35,7 +34,7 @@ import com.alvaroestrada.rickandmorty.ui.theme.WhiteGrey
 import com.alvaroestrada.rickandmorty.ui.viewmodel.ListViewModel
 
 @Composable
-fun ListScreen(characters: LazyPagingItems<Character>, onItemClick: (Character) -> Unit) {
+fun ListScreen(onItemClick: (Character) -> Unit) {
 
     Scaffold(
         modifier = Modifier
@@ -48,7 +47,6 @@ fun ListScreen(characters: LazyPagingItems<Character>, onItemClick: (Character) 
                 .padding(innerPadding)
                 .fillMaxSize()
                 .background(DarkLightPurple),
-            characters,
             onItemClick = onItemClick
         )
     }
@@ -119,10 +117,10 @@ fun LoadingScreen() {
 @Composable
 fun CharacterList(
     modifier: Modifier = Modifier,
-    characters: LazyPagingItems<Character>,
+    viewModel: ListViewModel = hiltViewModel(),
     onItemClick: (Character) -> Unit
 ) {
-
+    val characters = viewModel.getCharacters().collectAsLazyPagingItems()
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
