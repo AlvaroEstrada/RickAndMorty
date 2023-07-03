@@ -1,15 +1,18 @@
 package com.alvaroestrada.rickandmorty.ui.view.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +21,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -28,6 +33,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.alvaroestrada.rickandmorty.R
 import com.alvaroestrada.rickandmorty.data.model.Character
 import com.alvaroestrada.rickandmorty.ui.theme.DarkLightPurple
 import com.alvaroestrada.rickandmorty.ui.theme.DarkPurple
@@ -44,17 +50,12 @@ fun CharacterDetailScreen(id: Int) {
     viewModel.getCharacter(id)
 
     if (uiState.isLoading) {
-        DetailLoadingScreen()
+        LoadingDetailScreen()
     } else if (uiState.isError) {
         //TODO Error Screen
     } else {
         CharacterDetail(uiState.character!!)
     }
-}
-
-@Composable
-fun DetailLoadingScreen() {
-    Text(text = "Cargando")
 }
 
 @Composable
@@ -186,6 +187,68 @@ private fun getStatusColor(status: String): Color {
 
         else -> {
             LightGrey
+        }
+    }
+}
+
+@Composable
+fun LoadingDetailScreen() {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkLightPurple)
+    ) {
+        val (imageLoading, progressContainer) = createRefs()
+        val topGuide = createGuidelineFromTop(0.2f)
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_loading),
+            contentDescription = "Loading",
+            modifier = Modifier
+                .width(250.dp)
+                .constrainAs(imageLoading) {
+                    top.linkTo(topGuide)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            colorFilter = ColorFilter.tint(WhiteGrey)
+
+        )
+
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(progressContainer) {
+                    top.linkTo(imageLoading.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        ) {
+            val (progressIndicator, progressText) = createRefs()
+
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .width(40.dp)
+                    .padding(8.dp)
+                    .constrainAs(progressIndicator) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    }
+            )
+            Text(
+                text = "Bringing back character, please wait",
+                style = MaterialTheme.typography.subtitle1,
+                color = WhiteGrey,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .constrainAs(progressText) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(progressIndicator.bottom)
+                    }
+            )
+
         }
     }
 }
