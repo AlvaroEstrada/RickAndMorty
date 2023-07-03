@@ -13,6 +13,6 @@ class ListViewModel @Inject constructor(
     private val getCharactersUseCase: GetCharactersUseCase
 ) : ViewModel() {
 
-    fun getCharacters(): Flow<PagingData<Character>> = getCharactersUseCase()
+    fun getCharacters(): Flow<PagingData<Character>> = getCharactersUseCase(20)
 
 }
